@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>CareHire Docs Prototype</title>
+<title>CareHire | Modern Caregiving Solutions</title>
 <style>
 :root{
   --navy:#17324d; --teal:#0f8b8d; --teal2:#dff5f3; --ink:#1f2933; --muted:#6b7280;
@@ -60,11 +60,13 @@ textarea{min-height:90px;resize:vertical}
  .topbar{padding:14px 16px}.pill{display:none}
 }
 </style>
+<link rel="stylesheet" href="mcs-theme.css">
 </head>
 <body>
+<div class="mcs-brandbar"><strong>Modern Caregiving Solutions</strong><span>Clear next steps for families</span></div>
 <div class="app">
   <header class="topbar">
-    <div class="brand"><div class="logo">♥</div><div>CareHire Docs <span class="pill">Prototype</span></div></div>
+    <div class="brand"><div class="logo">C</div><div><strong>CareHire</strong><small class="mcs-byline">A Modern Caregiving Solutions tool</small></div></div>
     <button class="btn secondary" onclick="go('home')">Start over</button>
   </header>
   <div class="main">
@@ -82,7 +84,7 @@ textarea{min-height:90px;resize:vertical}
       <section id="home" class="screen active">
         <div class="kicker">Hire home support with confidence</div>
         <h1>Tell us what kind of help you need.</h1>
-        <p class="lead">CareHire turns a few simple answers into a care-hours estimate, job description, interview guide, and plain-language work agreement.</p>
+        <p class="lead">CareHire helps Canadian families turn care needs into a clear hiring plan, job description, interview guide, and plain-language work agreement.</p>
         <div class="progress"><div style="width:10%"></div></div>
         <div class="card">
           <label>Who are you looking to hire?</label>
@@ -271,5 +273,6 @@ function voiceInto(id){
 }
 generateAll();
 </script>
+<footer class="mcs-footer"><div><strong>Modern Caregiving Solutions</strong><br><span>CareHire supports clearer family hiring decisions.</span></div><div><a href="https://www.moderncaregiving.ca/" target="_blank" rel="noopener">moderncaregiving.ca</a></div></footer>
 </body>
 </html>
