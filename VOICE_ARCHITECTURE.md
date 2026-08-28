@@ -4,43 +4,53 @@
 
 For V1, **Speak instead** is push-to-talk, per question.
 
-The browser records a short audio clip with `MediaRecorder` and sends it over HTTPS to `POST /api/voice/transcribe`. The server sends the clip to Gemini transcription and immediately deletes the temporary Gemini file after the transcript is returned.
+The browser records a short audio clip with `MediaRecorder` and sends it over HTTPS to `POST /api/voice/transcribe`. The server sends the clip to Gemini transcription and immediately deletes the temporary Gemini Files API object after the transcript is returned.
 
 Do **not** use the browser Web Speech API as the primary production path. Browser support and behaviour vary, and it can obscure which provider processes the audio.
 
 ## Why this fits MCS / MyHuddle
 
-MyHuddle already uses Gemini for Teeyah. CareHire should reuse the MCS Gemini governance pattern—central secret management, logging rules, model allow-listing, cost controls and vendor review—without sharing Teeyah conversation state or memory.
+MyHuddle already uses Gemini for Teeyah. CareHire should reuse the MCS Gemini governance pattern—central secret management, model allow-listing, cost controls and vendor review—without sharing Teeyah conversation state or memory.
 
-The services may share an MCS AI gateway, but they should remain separate logical clients:
+Use the same approved Google/Gemini vendor relationship, but give CareHire its **own service credential and quota/budget boundary**. Prefer a separate CareHire Google Cloud project where practical; at minimum, use a separate CareHire API key with its own restrictions and monitoring. Never copy the Teeyah production key into CareHire.
+
+The services may share an MCS AI gateway, but they remain separate logical clients:
 
 - `teeyah` — conversational caregiving assistant
 - `carehire-voice` — transcription only
 - future `carehire-intake-parser` — structured extraction only
 
-No Teeyah memory, chat transcript or recipient context should be imported into CareHire voice requests.
+No Teeyah memory, chat transcript or recipient context is imported into CareHire voice requests.
 
 ## Recommended models
 
 - **V1 per-field transcription:** `gemini-3.5-transcribe`.
-- **Later real-time streaming:** `gemini-3.5-transcribe-live` if usability testing proves that streaming is worth the added complexity.
-- **Later “tell me everything” intake:** transcribe first, then send the transcript—not raw audio unless needed—to a Gemini model using a strict JSON Schema. Validate every returned field before inserting it into the form.
+- **Later real-time streaming:** `gemini-3.5-transcribe-live` only if usability testing proves that streaming is worth the added complexity.
+- **Later “tell me everything” intake:** transcribe first, then send the transcript—not raw audio unless required—to a Gemini model using strict structured output. Validate every returned field before inserting it into the form.
 
 ## UX rules
 
 1. Voice is optional. Typing always remains available.
 2. Button states are explicit: Speak instead → Stop recording → Transcribing.
 3. Never silently submit a transcript. Put it into the field and tell the user to review it.
-4. A transcription failure must never block the hiring workflow.
+4. A transcription failure never blocks the hiring workflow.
 5. Keep recordings short; V1 caps uploads at 6 MB.
-6. Do not retain the audio in CareHire after transcription.
+6. Do not retain the audio in the CareHire application after transcription.
 7. Avoid recording names, diagnoses, medication lists or other unnecessary health details.
+8. Do not make a legal or employment decision from voice input without showing the extracted text/fields to the user first.
 
-## Security/privacy
+## Security and privacy
 
+- Use a **paid Gemini API project** for production, not the free tier. Google documents paid-tier content as not used to improve its products.
+- Keep Gemini developer logging/data sharing disabled for CareHire. Do not contribute CareHire logs or datasets to model improvement.
+- If MCS deliberately enables Gemini API logging for operational reasons, use the shortest retention that meets the operational need and never log transcript content in CareHire's own application logs.
 - Gemini API key remains server-side only.
-- Store the key in Google Secret Manager.
-- Rate-limit the transcription endpoint.
+- Store the key in Google Secret Manager and give the Cloud Run service identity only the access it needs.
+- Rate-limit the transcription endpoint and cap audio size/duration.
 - Log request IDs, latency, model and status—not audio or transcript content.
 - Delete Gemini Files API uploads immediately after each request; do not rely only on automatic expiry.
-- Document Google's applicable data-processing terms in the MCS privacy/vendor register before launch.
+- Document Google's applicable data-processing terms, retention configuration and service owner in the MCS privacy/vendor register before launch.
+
+## Production privacy boundary
+
+CareHire should assume a user may accidentally say sensitive health information even when the UI tells them not to. The technical design therefore treats every recording and transcript as potentially sensitive: minimum collection, short-lived processing, no conversational memory, no cross-product context, no transcript analytics, and no silent persistence.
