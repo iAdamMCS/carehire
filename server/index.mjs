@@ -75,7 +75,7 @@ app.use(express.static(publicDir, {
   maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0
 }));
 
-app.get('*', (_req, res) => res.sendFile(path.join(publicDir, 'index.html')));
+app.get('/{*splat}', (_req, res) => res.sendFile(path.join(publicDir, 'index.html')));
 
 app.use((error, _req, res, _next) => {
   console.error('unhandled_error', { name: error?.name });
