@@ -15,3 +15,10 @@ jobs:
           node-version: 22
       - run: npm install
       - run: npm run check
+      - name: Boot service and check health
+        run: |
+          node server/index.mjs > /tmp/carehire.log 2>&1 &
+          pid=$!
+          trap 'kill $pid || true' EXIT
+          sleep 2
+          curl --fail --silent http://127.0.0.1:8080/healthz
