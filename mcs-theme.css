@@ -7,27 +7,42 @@
   --line:#d8dfdf !important;
   --bg:#f6f3ec !important;
   --warn:#fff6dc !important;
+  --mcs-mist:#eef5f2;
+  --mcs-soft:#fbfaf6;
+  --mcs-accent:#69b9b0;
 }
 html{background:#f6f3ec}
-body{background:#f6f3ec !important;color:#1b2630 !important;line-height:1.5}
+body{background:#f6f3ec !important;color:#1b2630 !important;line-height:1.55}
 .mcs-brandbar{background:#162a3a;color:#fff;padding:10px max(16px,calc((100vw - 1180px)/2 + 22px));display:flex;gap:10px;align-items:center;font-size:13px;letter-spacing:.02em}
 .mcs-brandbar strong{font-weight:800}.mcs-brandbar span{opacity:.72}.mcs-brandbar span:before{content:'·';margin-right:10px}
-.app{max-width:1180px;min-height:calc(100vh - 40px);box-shadow:0 16px 40px rgba(22,42,58,.09);background:#fff !important}
-.topbar{padding:15px 22px !important;background:rgba(255,255,255,.98) !important;border-bottom:1px solid #d8dfdf !important}
+.app{max-width:1180px;min-height:calc(100vh - 40px);box-shadow:0 18px 46px rgba(22,42,58,.08);background:#fff !important}
+.topbar{padding:17px 24px !important;background:rgba(255,255,255,.98) !important;border-bottom:1px solid #e1e6e4 !important}
 .brand{gap:12px !important;color:#162a3a !important;align-items:center}
-.logo{width:42px !important;height:42px !important;border-radius:14px !important;background:#147b78 !important;font-size:20px !important;font-weight:900}
+.logo{width:40px !important;height:40px !important;border-radius:50% !important;background:#147b78 !important;font-size:18px !important;font-weight:900;box-shadow:0 0 0 4px #edf7f5}
 .brand>div:last-child{display:flex;flex-direction:column;line-height:1.05}
 .brand strong{font-size:21px;font-weight:850}.mcs-byline{display:block;font-size:12px;font-weight:500;color:#5e6d76;margin-top:5px}.pill{display:none !important}
-.main{grid-template-columns:255px 1fr !important;min-height:calc(100vh - 116px) !important}
-.sidebar{background:#162a3a !important;padding:28px 16px !important}.side-title{letter-spacing:.12em !important;opacity:.65 !important}.navbtn{border-radius:12px !important;padding:13px 14px !important}.navbtn:hover,.navbtn.active{background:rgba(255,255,255,.13) !important}
-.content{padding:38px 42px 52px !important;max-width:860px !important}
-h1{color:#162a3a !important;font-size:clamp(32px,5vw,46px) !important;line-height:1.08 !important;letter-spacing:-.03em !important;margin:7px 0 12px !important}h2,.doc h3{color:#162a3a !important}
-.kicker{color:#147b78 !important;letter-spacing:.12em !important;font-weight:850 !important}.lead{color:#53646e !important;font-size:18px !important;line-height:1.6 !important;max-width:700px !important}
-.card,.doc,.result{border:1px solid #d8dfdf !important;border-radius:18px !important;background:#fff !important}.card{padding:22px !important;box-shadow:0 7px 25px rgba(22,42,58,.05)}
-.choice{border:1px solid #d8dfdf !important;border-radius:15px !important;padding:17px !important;background:#fff !important}.choice:hover,.choice.selected{border:2px solid #147b78 !important;background:#f1f8f6 !important}
-input,select,textarea{border:1px solid #aebdbd !important;border-radius:11px !important;color:#1b2630 !important;padding:13px 14px !important}input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid rgba(20,123,120,.25) !important;outline-offset:2px;border-color:#147b78 !important}
-.btn{border-radius:11px !important;font-weight:800 !important}.primary{background:#147b78 !important;color:#fff !important}.primary:hover{background:#0c5f5d !important}.secondary{background:#edf2f1 !important;color:#162a3a !important}.voice{background:#edf7f5 !important;color:#0c5f5d !important;border:1px solid #b7ddd8 !important}
-.progress{background:#e6eceb !important}.progress>div{background:#147b78 !important}.note{background:#fff6dc !important;border:1px solid #efdfad !important;border-radius:13px !important}.result{background:#eef6f5 !important;border-color:#c8e2df !important}.big-number{color:#162a3a !important}
-.check{border:1px solid #d8dfdf !important;border-radius:12px !important;padding:12px !important}.footer-note{color:#5e6d76 !important}
-.mcs-footer{max-width:1180px;margin:0 auto;padding:24px 22px 34px;color:#5e6d76;font-size:13px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}.mcs-footer strong{color:#162a3a}.mcs-footer a{color:#0c5f5d;text-decoration:none;font-weight:700}
-@media(max-width:800px){.mcs-brandbar{padding:9px 16px}.mcs-brandbar span{display:none}.content{padding:28px 18px 44px !important}.topbar{padding:13px 16px !important}.app{box-shadow:none}.mcs-footer{padding:20px 18px 28px}}
+.main{grid-template-columns:224px minmax(0,1fr) !important;min-height:calc(100vh - 116px) !important}
+.sidebar{background:#1b3342 !important;padding:32px 14px !important;border-right:1px solid rgba(255,255,255,.06)}
+.side-title{letter-spacing:.12em !important;opacity:.58 !important;margin-bottom:16px !important}
+.navbtn{position:relative;border-radius:0 10px 10px 0 !important;padding:12px 12px 12px 14px !important;margin:5px 0 !important;border-left:3px solid transparent !important;transition:background .18s ease,border-color .18s ease,transform .18s ease}
+.navbtn:hover{background:rgba(255,255,255,.055) !important;transform:translateX(1px)}
+.navbtn.active{background:rgba(255,255,255,.075) !important;border-left-color:var(--mcs-accent) !important}
+.navbtn small{opacity:.67 !important;margin-top:4px !important}
+.content{padding:46px 48px 58px !important;max-width:900px !important}
+h1{color:#162a3a !important;font-size:clamp(34px,4.5vw,44px) !important;line-height:1.11 !important;letter-spacing:-.025em !important;margin:8px 0 14px !important;max-width:760px}
+h2,.doc h3{color:#162a3a !important}
+.kicker{color:#147b78 !important;letter-spacing:.13em !important;font-weight:850 !important;font-size:12px !important}.lead{color:#53646e !important;font-size:18px !important;line-height:1.68 !important;max-width:720px !important}
+.card,.doc,.result{border:1px solid #dde4e2 !important;border-radius:20px !important;background:#fff !important}.card{padding:24px !important;box-shadow:0 8px 28px rgba(22,42,58,.045)}
+.choice{border:1px solid #dce3e1 !important;border-radius:16px !important;padding:18px !important;background:#fff !important;transition:border-color .18s ease,background .18s ease,transform .18s ease}
+.choice:hover{border-color:#9bcfc8 !important;background:#fbfefd !important;transform:translateY(-1px)}
+.choice.selected{border:2px solid #147b78 !important;background:#f1f8f6 !important}
+input,select,textarea{border:1px solid #afbebc !important;border-radius:12px !important;color:#1b2630 !important;padding:13px 14px !important;background:#fff !important}input:focus,select:focus,textarea:focus,button:focus-visible{outline:3px solid rgba(20,123,120,.22) !important;outline-offset:2px;border-color:#147b78 !important}
+.actions{gap:12px !important;margin-top:22px !important}.btn{border-radius:12px !important;font-weight:800 !important;padding:12px 18px !important}.primary{background:#147b78 !important;color:#fff !important}.primary:hover{background:#0c5f5d !important}.secondary{background:#edf2f1 !important;color:#162a3a !important}.voice{background:#edf7f5 !important;color:#0c5f5d !important;border:1px solid #b7ddd8 !important}
+/* Voice belongs beside questions that accept dictated text. The first screen is role/province selection, so hide it there. */
+#home .voice{display:none !important}
+.progress{height:7px !important;background:#e8eeec !important;border-radius:99px !important;margin:18px 0 28px !important}.progress>div{background:linear-gradient(90deg,#147b78,#69b9b0) !important}.note{background:#fff8e7 !important;border:1px solid #efdfad !important;border-radius:14px !important}.result{background:#eef6f5 !important;border-color:#c8e2df !important}.big-number{color:#162a3a !important}
+.check{border:1px solid #dde4e2 !important;border-radius:13px !important;padding:12px !important}.footer-note{color:#697981 !important;font-size:12.5px !important;max-width:720px !important}
+.mcs-footer{max-width:1180px;margin:0 auto;padding:24px 22px 34px;color:#5e6d76;font-size:13px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(22,42,58,.06)}.mcs-footer strong{color:#162a3a}.mcs-footer a{color:#0c5f5d;text-decoration:none;font-weight:700}.mcs-footer a:hover{text-decoration:underline}
+/* Make the review surface feel like guided family decision support rather than an admin dashboard. */
+.screen.active{animation:mcsFade .2s ease-out}@keyframes mcsFade{from{opacity:.6;transform:translateY(2px)}to{opacity:1;transform:none}}
+@media(max-width:800px){.mcs-brandbar{padding:9px 16px}.mcs-brandbar span{display:none}.main{grid-template-columns:1fr !important}.content{padding:30px 20px 46px !important}.topbar{padding:14px 16px !important}.app{box-shadow:none}.mcs-footer{padding:20px 18px 28px}.logo{width:38px !important;height:38px !important}}
