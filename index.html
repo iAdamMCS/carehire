@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>CareHire Docs Prototype</title>
+<style>
+:root{
+  --navy:#17324d; --teal:#0f8b8d; --teal2:#dff5f3; --ink:#1f2933; --muted:#6b7280;
+  --line:#d9e1e8; --bg:#f7fafc; --white:#fff; --warn:#fff6d9; --danger:#8b1e2d;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+button,input,select,textarea{font:inherit}
+.app{max-width:1180px;margin:auto;min-height:100vh;background:white}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--line);position:sticky;top:0;background:white;z-index:5}
+.brand{display:flex;gap:11px;align-items:center;font-weight:800;color:var(--navy)}
+.logo{width:38px;height:38px;border-radius:11px;background:var(--teal);display:grid;place-items:center;color:white;font-size:20px}
+.pill{font-size:12px;padding:6px 9px;border-radius:999px;background:var(--teal2);color:#0a5f61;font-weight:700}
+.main{display:grid;grid-template-columns:260px 1fr;min-height:calc(100vh - 76px)}
+.sidebar{background:var(--navy);padding:24px 16px;color:white}
+.side-title{font-size:12px;text-transform:uppercase;letter-spacing:.12em;opacity:.65;margin:4px 12px 12px}
+.navbtn{width:100%;border:0;background:transparent;color:white;text-align:left;padding:13px 14px;border-radius:10px;cursor:pointer;margin:3px 0}
+.navbtn:hover,.navbtn.active{background:rgba(255,255,255,.13)}
+.navbtn small{display:block;opacity:.7;margin-top:3px}
+.content{padding:34px;max-width:820px;width:100%}
+.screen{display:none}.screen.active{display:block}
+h1{font-size:38px;line-height:1.1;color:var(--navy);margin:0 0 12px}
+h2{color:var(--navy);margin-top:0}
+.lead{font-size:18px;color:#52606d;line-height:1.55;max-width:680px}
+.card{border:1px solid var(--line);border-radius:16px;padding:20px;background:white;margin:16px 0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{margin:14px 0}
+label{font-weight:700;display:block;margin-bottom:7px}
+input,select,textarea{width:100%;padding:13px 14px;border:1px solid #b9c6d2;border-radius:10px;background:white}
+textarea{min-height:90px;resize:vertical}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.btn{border:0;border-radius:10px;padding:12px 18px;font-weight:750;cursor:pointer}
+.primary{background:var(--teal);color:white}.secondary{background:#edf2f7;color:var(--navy)}
+.voice{background:#eef8f8;color:#0b7274;border:1px solid #b8e7e4}
+.progress{height:8px;background:#e8eef3;border-radius:99px;overflow:hidden;margin:14px 0 24px}
+.progress > div{height:100%;background:var(--teal);width:16%}
+.choice-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.choice{border:1px solid var(--line);border-radius:14px;padding:16px;cursor:pointer}
+.choice:hover,.choice.selected{border:2px solid var(--teal);background:#f3fbfa}
+.kicker{color:var(--teal);font-weight:800;text-transform:uppercase;font-size:12px;letter-spacing:.1em}
+.note{padding:14px;border-radius:12px;background:var(--warn);line-height:1.45}
+.result{padding:18px;border-radius:14px;background:#f2fbfb;border:1px solid #ccebe9}
+.big-number{font-size:38px;font-weight:800;color:var(--navy)}
+.doc{border:1px solid var(--line);padding:28px;border-radius:14px;background:#fff;line-height:1.55}
+.doc h3{color:var(--navy);margin-top:22px}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.check{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:10px}
+.check input{width:auto;margin-top:3px}
+.stepdots{display:flex;gap:6px;margin:18px 0}.dot{width:10px;height:10px;border-radius:50%;background:#d4dde5}.dot.on{background:var(--teal)}
+.footer-note{color:var(--muted);font-size:13px;margin-top:26px}
+@media(max-width:800px){
+ .main{grid-template-columns:1fr}.sidebar{display:none}.content{padding:24px 18px}
+ h1{font-size:31px}.grid2,.choice-grid,.checks{grid-template-columns:1fr}
+ .topbar{padding:14px 16px}.pill{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="topbar">
+    <div class="brand"><div class="logo">♥</div><div>CareHire Docs <span class="pill">Prototype</span></div></div>
+    <button class="btn secondary" onclick="go('home')">Start over</button>
+  </header>
+  <div class="main">
+    <aside class="sidebar">
+      <div class="side-title">Your hiring plan</div>
+      <button class="navbtn active" data-nav="home" onclick="go('home')">1. Get started<small>What kind of help?</small></button>
+      <button class="navbtn" data-nav="needs" onclick="go('needs')">2. Care needs<small>Estimate hours</small></button>
+      <button class="navbtn" data-nav="details" onclick="go('details')">3. Job details<small>Schedule, pay, duties</small></button>
+      <button class="navbtn" data-nav="job" onclick="generateAll();go('job')">4. Job description<small>Ready to post</small></button>
+      <button class="navbtn" data-nav="interview" onclick="generateAll();go('interview')">5. Interview guide<small>Questions to ask</small></button>
+      <button class="navbtn" data-nav="agreement" onclick="generateAll();go('agreement')">6. Work agreement<small>Review together</small></button>
+    </aside>
+
+    <main class="content">
+      <section id="home" class="screen active">
+        <div class="kicker">Hire home support with confidence</div>
+        <h1>Tell us what kind of help you need.</h1>
+        <p class="lead">CareHire turns a few simple answers into a care-hours estimate, job description, interview guide, and plain-language work agreement.</p>
+        <div class="progress"><div style="width:10%"></div></div>
+        <div class="card">
+          <label>Who are you looking to hire?</label>
+          <div class="choice-grid" id="roleChoices">
+            <div class="choice selected" data-role="Personal Support Worker (PSW)" onclick="pickRole(this)">🧑‍⚕️ <b>Personal Support Worker</b><br><small>Personal care, mobility, daily support</small></div>
+            <div class="choice" data-role="Housekeeper" onclick="pickRole(this)">🧹 <b>Housekeeper</b><br><small>Cleaning and household help</small></div>
+            <div class="choice" data-role="Sitter / Companion" onclick="pickRole(this)">☕ <b>Sitter / Companion</b><br><small>Company, supervision, simple support</small></div>
+            <div class="choice" data-role="Overnight Caregiver" onclick="pickRole(this)">🌙 <b>Overnight Care</b><br><small>Support or presence overnight</small></div>
+          </div>
+          <div class="field">
+            <label>Province or territory</label>
+            <select id="province">
+              <option>Alberta</option><option>British Columbia</option><option>Manitoba</option><option>New Brunswick</option>
+              <option>Newfoundland and Labrador</option><option>Nova Scotia</option><option>Ontario</option><option>Prince Edward Island</option>
+              <option>Quebec</option><option>Saskatchewan</option><option>Northwest Territories</option><option>Nunavut</option><option>Yukon</option>
+            </select>
+          </div>
+          <div class="actions">
+            <button class="btn voice" onclick="voiceInto('homeNotes')">🎙 Speak instead</button>
+            <button class="btn primary" onclick="go('needs')">Continue →</button>
+          </div>
+          <input id="homeNotes" type="hidden">
+        </div>
+        <p class="footer-note">CareHire provides general information, not legal advice. Employment rules should always be verified before hiring.</p>
+      </section>
+
+      <section id="needs" class="screen">
+        <div class="kicker">Care needs</div>
+        <h1>What help is needed in a typical week?</h1>
+        <p class="lead">Choose what applies. We’ll estimate a starting range—you can change it anytime.</p>
+        <div class="checks">
+          <label class="check"><input type="checkbox" class="need" data-min="3" data-max="5" value="Morning personal care"> Morning personal care</label>
+          <label class="check"><input type="checkbox" class="need" data-min="3" data-max="5" value="Meal preparation"> Meal preparation</label>
+          <label class="check"><input type="checkbox" class="need" data-min="2" data-max="4" value="Mobility assistance"> Mobility assistance</label>
+          <label class="check"><input type="checkbox" class="need" data-min="1" data-max="2" value="Medication reminders"> Medication reminders</label>
+          <label class="check"><input type="checkbox" class="need" data-min="2" data-max="4" value="Bathing assistance"> Bathing assistance</label>
+          <label class="check"><input type="checkbox" class="need" data-min="2" data-max="4" value="Companionship"> Companionship</label>
+          <label class="check"><input type="checkbox" class="need" data-min="2" data-max="5" value="Appointments and errands"> Appointments & errands</label>
+          <label class="check"><input type="checkbox" class="need" data-min="4" data-max="8" value="Evening support"> Evening support</label>
+        </div>
+        <div class="field">
+          <label>Does someone need to be present continuously?</label>
+          <select id="presence"><option value="0">No — check-ins or task-based help</option><option value="14">Some periods of supervision</option><option value="28">Yes — regular supervision is needed</option></select>
+        </div>
+        <div class="actions">
+          <button class="btn voice" onclick="voiceInto('needNotes')">🎙 Describe the routine</button>
+          <button class="btn secondary" onclick="calcHours()">Calculate estimate</button>
+          <button class="btn primary" onclick="calcHours();go('details')">Use estimate →</button>
+        </div>
+        <textarea id="needNotes" placeholder="Optional notes from voice or typing"></textarea>
+        <div id="hoursResult" class="result" style="display:none"></div>
+      </section>
+
+      <section id="details" class="screen">
+        <div class="kicker">Job details</div>
+        <h1>Now add the practical details.</h1>
+        <div class="grid2">
+          <div class="field"><label>Weekly hours</label><input id="hours" value="20"></div>
+          <div class="field"><label>Pay rate</label><input id="pay" value="$24/hour"></div>
+          <div class="field"><label>Schedule</label><input id="schedule" value="Weekday mornings + 2 evenings"></div>
+          <div class="field"><label>Live-in or live-out?</label><select id="live"><option>Live-out</option><option>Live-in</option></select></div>
+        </div>
+        <div class="field"><label>Requirements</label><textarea id="requirements">First Aid/CPR, references, vulnerable sector check, reliable transportation</textarea></div>
+        <div class="field"><label>Anything important about the home or routine?</label><textarea id="notes">Respectful, dependable support in a family home. Clear communication with the family is important.</textarea></div>
+        <div class="note">CareHire keeps health details general. Avoid including private medical information in public job postings.</div>
+        <div class="actions">
+          <button class="btn voice" onclick="voiceInto('notes')">🎙 Add by voice</button>
+          <button class="btn primary" onclick="generateAll();go('job')">Create documents →</button>
+        </div>
+      </section>
+
+      <section id="job" class="screen">
+        <div class="kicker">Generated for you</div><h1>Your job description</h1>
+        <div id="jobDoc" class="doc"></div>
+        <div class="actions">
+          <button class="btn secondary" onclick="copyText('jobDoc')">Copy text</button>
+          <button class="btn voice" onclick="speak('jobDoc')">🔊 Read aloud</button>
+          <button class="btn primary" onclick="go('interview')">Interview questions →</button>
+        </div>
+      </section>
+
+      <section id="interview" class="screen">
+        <div class="kicker">Interview helper</div><h1>Questions matched to this job</h1>
+        <div id="interviewDoc" class="doc"></div>
+        <div class="actions">
+          <button class="btn secondary" onclick="copyText('interviewDoc')">Copy questions</button>
+          <button class="btn voice" onclick="speak('interviewDoc')">🔊 Read aloud</button>
+          <button class="btn primary" onclick="go('agreement')">Build agreement →</button>
+        </div>
+      </section>
+
+      <section id="agreement" class="screen">
+        <div class="kicker">Plain-language agreement</div><h1>Work agreement draft</h1>
+        <div class="note"><b>Before signing:</b> the worker may be considered your employee depending on how the work is arranged. Review current federal and provincial requirements before finalizing.</div>
+        <div id="agreementDoc" class="doc"></div>
+        <div class="actions">
+          <button class="btn secondary" onclick="copyText('agreementDoc')">Copy agreement</button>
+          <button class="btn voice" onclick="speak('agreementDoc')">🔊 Read aloud</button>
+          <button class="btn primary" onclick="window.print()">Print / Save PDF</button>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+let role = "Personal Support Worker (PSW)";
+let selectedNeeds = [];
+
+function go(id){
+  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.navbtn').forEach(x=>x.classList.toggle('active',x.dataset.nav===id));
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function pickRole(el){
+  document.querySelectorAll('.choice').forEach(x=>x.classList.remove('selected'));
+  el.classList.add('selected'); role=el.dataset.role;
+}
+function calcHours(){
+  selectedNeeds=[...document.querySelectorAll('.need:checked')].map(x=>x.value);
+  let min=0,max=0;
+  document.querySelectorAll('.need:checked').forEach(x=>{min+=+x.dataset.min;max+=+x.dataset.max});
+  let p=+document.getElementById('presence').value; min+=Math.round(p*.5);max+=p;
+  if(min===0){min=8;max=12}
+  const midpoint=Math.round((min+max)/2);
+  document.getElementById('hours').value=midpoint;
+  document.getElementById('hoursResult').style.display='block';
+  document.getElementById('hoursResult').innerHTML=`<div class="big-number">${min}–${max} hrs/week</div><b>Suggested starting pattern:</b> ${midpoint<=15?'3–4 shorter visits each week':midpoint<=28?'weekday mornings plus 1–2 evening visits':'daily support blocks across the week'}<br><small>This is an estimate, not a clinical assessment.</small>`;
+}
+function generateAll(){
+  if(!selectedNeeds.length) calcHours();
+  const p=document.getElementById('province').value;
+  const h=document.getElementById('hours').value;
+  const pay=document.getElementById('pay').value;
+  const sched=document.getElementById('schedule').value;
+  const live=document.getElementById('live').value;
+  const req=document.getElementById('requirements').value;
+  const notes=document.getElementById('notes').value;
+  const duties=(selectedNeeds.length?selectedNeeds:["Daily support","Companionship","Household assistance"]);
+  document.getElementById('jobDoc').innerHTML=`
+    <h2>${role} — Family Home</h2>
+    <p><b>Location:</b> ${p} &nbsp; • &nbsp; <b>Type:</b> ${live} &nbsp; • &nbsp; <b>Hours:</b> About ${h} per week</p>
+    <h3>About the role</h3><p>We are looking for a dependable and respectful ${role.toLowerCase()} to provide practical support in a family home.</p>
+    <h3>What you’ll help with</h3><ul>${duties.map(x=>`<li>${x}</li>`).join('')}</ul>
+    <h3>Schedule & pay</h3><p>${sched}. Compensation: ${pay}.</p>
+    <h3>What we’re looking for</h3><p>${req}.</p>
+    <h3>About the home</h3><p>${notes}</p>
+    <p><i>Please apply with a short introduction, your availability, and relevant experience.</i></p>`;
+  const mobility=duties.some(x=>x.toLowerCase().includes('mobility')||x.toLowerCase().includes('bathing'));
+  document.getElementById('interviewDoc').innerHTML=`
+    <h3>Experience & qualifications</h3>
+    <ol><li>Tell me about your experience providing support similar to this role.</li>
+    <li>What training or certifications do you currently hold?</li>
+    ${mobility?'<li>What experience and training do you have with safe mobility or transfer assistance?</li>':''}</ol>
+    <h3>Availability & reliability</h3><ol><li>Does the proposed schedule work consistently for you?</li><li>How do you handle unexpected lateness or a missed shift?</li></ol>
+    <h3>Approach to care</h3><ol><li>How do you support someone while still respecting their independence and choices?</li><li>Tell me about a time you had to adapt when a routine did not go as planned.</li></ol>
+    <h3>Screening</h3><ol><li>Are you comfortable providing references?</li><li>Are you comfortable completing the checks listed in the job posting?</li></ol>`;
+  document.getElementById('agreementDoc').innerHTML=`
+    <h2>Work Agreement</h2>
+    <p>This agreement is between <b>____________________</b> (“the family/hirer”) and <b>____________________</b> (“the worker”).</p>
+    <h3>1. Role and duties</h3><p>The worker will provide support as a ${role}. Expected duties include ${duties.join(', ')}. Any major change to duties should be discussed first.</p>
+    <h3>2. Schedule</h3><p>Expected schedule: ${sched}, approximately ${h} per week. Changes should be agreed on as early as reasonably possible.</p>
+    <h3>3. Pay</h3><p>The agreed rate is ${pay}. Payment frequency: ____________________.</p>
+    <h3>4. Expenses</h3><p>Pre-approved work-related expenses will be reimbursed when receipts are provided.</p>
+    <h3>5. Privacy and respect</h3><p>The worker will respect the privacy, dignity, home, and personal information of the person receiving support and the family.</p>
+    <h3>6. Ending the arrangement</h3><p>Either party may end the working arrangement subject to any minimum notice, termination pay, or other requirements that apply under ${p} law.</p>
+    <h3>7. Employment status and legal requirements</h3><p>The parties understand that employment status and employer obligations depend on the actual working relationship. Current government requirements should be reviewed before signing.</p>
+    <h3>Signatures</h3><p>Family/Hirer: ____________________ &nbsp;&nbsp; Date: __________</p><p>Worker: _________________________ &nbsp;&nbsp; Date: __________</p>
+    <hr><small>This tool provides general information and drafting assistance only. It does not provide legal advice.</small>`;
+}
+function copyText(id){
+  navigator.clipboard.writeText(document.getElementById(id).innerText).then(()=>alert('Copied'));
+}
+function speak(id){
+  if(!('speechSynthesis' in window)){alert('Text-to-speech is not supported in this browser.');return}
+  speechSynthesis.cancel(); speechSynthesis.speak(new SpeechSynthesisUtterance(document.getElementById(id).innerText));
+}
+function voiceInto(id){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert('Voice input is not supported in this browser. Try Chrome or Edge.');return}
+  const r=new SR(); r.lang='en-CA'; r.interimResults=false;
+  r.onresult=e=>{const el=document.getElementById(id); el.value=(el.value?el.value+' ':'')+e.results[0][0].transcript;};
+  r.onerror=e=>alert('Voice input could not start: '+e.error);
+  r.start();
+}
+generateAll();
+</script>
+</body>
+</html>
