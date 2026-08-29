@@ -63,6 +63,43 @@
   const schedule = document.getElementById('schedule');
   const needNotes = document.getElementById('needNotes');
   const hoursResult = document.getElementById('hoursResult');
+  let selectAllButton;
+
+  function updateSelectAllButton() {
+    if (!selectAllButton || !checks) return;
+    const inputs = [...checks.querySelectorAll('.need')];
+    const allSelected = inputs.length > 0 && inputs.every(input => input.checked);
+    selectAllButton.textContent = allSelected ? 'Clear all' : 'Select all';
+    selectAllButton.setAttribute('aria-pressed', allSelected ? 'true' : 'false');
+    selectAllButton.setAttribute('aria-label', allSelected ? 'Clear all tasks' : 'Select all tasks');
+  }
+
+  function ensureSelectAllButton() {
+    if (!checks || selectAllButton) return;
+    const row = document.createElement('div');
+    row.className = 'needs-bulk-actions';
+    row.style.cssText = 'display:flex;justify-content:flex-end;margin:0 0 12px;';
+    selectAllButton = document.createElement('button');
+    selectAllButton.type = 'button';
+    selectAllButton.className = 'btn secondary';
+    selectAllButton.textContent = 'Select all';
+    selectAllButton.setAttribute('aria-pressed', 'false');
+    row.append(selectAllButton);
+    checks.parentNode.insertBefore(row, checks);
+
+    selectAllButton.addEventListener('click', () => {
+      const inputs = [...checks.querySelectorAll('.need')];
+      const shouldSelect = !inputs.every(input => input.checked);
+      inputs.forEach(input => { input.checked = shouldSelect; });
+      if (!shouldSelect && typeof selectedNeeds !== 'undefined') selectedNeeds = [];
+      if (hoursResult) hoursResult.style.display = 'none';
+      updateSelectAllButton();
+    });
+
+    checks.addEventListener('change', event => {
+      if (event.target.matches('.need')) updateSelectAllButton();
+    });
+  }
 
   function renderNeedsForRole(roleName) {
     const config = configs[roleName] || configs['Personal Support Worker (PSW)'];
@@ -82,6 +119,7 @@
     if (typeof selectedNeeds !== 'undefined') selectedNeeds = [];
     if (requirements) requirements.value = config.requirements;
     if (schedule) schedule.value = config.schedule;
+    updateSelectAllButton();
   }
 
   const originalPickRole = window.pickRole;
@@ -101,5 +139,6 @@
     else if (roleName === 'Overnight Caregiver') interviewDoc.innerHTML = `<h3>Overnight experience</h3><ol><li>Tell me about your experience providing overnight support in a private home.</li><li>How do you stay alert to agreed overnight needs while still respecting privacy and rest?</li><li>What would you do if something changed unexpectedly during the night?</li></ol><h3>Availability & reliability</h3><ol><li>Can you consistently cover the proposed overnight schedule?</li><li>How would you handle being unable to attend an overnight shift?</li></ol><h3>Screening</h3><ol><li>Are you comfortable providing references that we may contact?</li><li>What training or certifications do you currently hold that are relevant to this role?</li></ol>`;
   };
 
+  ensureSelectAllButton();
   renderNeedsForRole(document.querySelector('#roleChoices .choice.selected')?.dataset?.role || 'Personal Support Worker (PSW)');
 })();
