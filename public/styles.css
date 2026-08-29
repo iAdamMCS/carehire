@@ -26,7 +26,7 @@ a { color: var(--mcs-teal-dark); }
 .header { background: rgba(255,255,255,.97); border-bottom: 1px solid var(--mcs-line); position: sticky; top: 0; z-index: 20; }
 .header-inner { max-width: 1180px; margin: auto; padding: 15px 22px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
 .product { display:flex; align-items:center; gap:12px; min-width:0; }
-.mark { width:42px; height:42px; border-radius:14px; background:var(--mcs-teal); color:white; display:grid; place-items:center; font-weight:900; font-size:20px; }
+.mark { width:52px; height:40px; border-radius:0; background-color:transparent; background-image:url('https://images.squarespace-cdn.com/content/v1/5f074a06b4e35a5a2c5837b2/a7c99e54-8eaa-4ede-8ec3-b907684ea6c0/ModernCaregiving_Icon_FullColor_ModernCaregiving_Icon_FullColor.png'); background-repeat:no-repeat; background-position:center; background-size:contain; color:transparent; overflow:hidden; display:block; font-size:0; }
 .product-name { font-size: 21px; font-weight: 850; color: var(--mcs-navy); line-height:1.1; }
 .product-by { font-size: 12px; color: var(--mcs-muted); margin-top:3px; }
 .badge { padding:6px 9px; border-radius:999px; background:var(--mcs-sage); color:var(--mcs-teal-dark); font-size:12px; font-weight:800; }
@@ -90,6 +90,7 @@ textarea { min-height:94px; resize:vertical; }
   .header-inner { padding:13px 16px; }
   .badge { display:none; }
   .brandbar { padding-left:16px; }
+  .mark { width:48px; height:36px; }
   .task-table { font-size:14px; }
   .task-table th:nth-child(4), .task-table td:nth-child(4) { display:none; }
 }
