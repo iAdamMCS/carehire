@@ -7,6 +7,7 @@ on:
       - 'mcs-theme.css'
       - 'role-fix.js'
       - 'qa-fixes.js'
+      - 'a11y-fixes.js'
       - 'qa/**'
       - '.github/workflows/review-qa.yml'
 
@@ -21,20 +22,20 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Install Playwright
+      - name: Install Playwright and axe
         run: |
           npm init -y >/dev/null 2>&1
-          npm install playwright@1.55.0
+          npm install playwright@1.55.0 axe-core@4.10.3
           npx playwright install --with-deps chromium firefox webkit
       - name: Build reviewer bundle
         run: |
           mkdir -p qa-dist
-          cp index.html mcs-theme.css role-fix.js qa-fixes.js qa-dist/
+          cp index.html mcs-theme.css role-fix.js qa-fixes.js a11y-fixes.js qa-dist/
           python - <<'PY'
           from pathlib import Path
           path = Path('qa-dist/index.html')
           html = path.read_text(encoding='utf-8')
-          for tag in ['<script src="role-fix.js"></script>', '<script src="qa-fixes.js"></script>']:
+          for tag in ['<script src="role-fix.js"></script>', '<script src="qa-fixes.js"></script>', '<script src="a11y-fixes.js"></script>']:
               if tag not in html:
                   html = html.replace('</body>', f'{tag}\n</body>')
           path.write_text(html, encoding='utf-8')
@@ -53,3 +54,4 @@ jobs:
             echo "Running CareHire QA in ${browser}"
             node "qa/review-e2e-${browser}.mjs"
           done
+          node qa/accessibility.mjs
