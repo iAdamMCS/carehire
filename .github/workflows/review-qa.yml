@@ -5,6 +5,7 @@ on:
     paths:
       - 'index.html'
       - 'mcs-theme.css'
+      - 'mcs-symbol.png'
       - 'role-fix.js'
       - 'qa-fixes.js'
       - 'a11y-fixes.js'
@@ -30,7 +31,7 @@ jobs:
       - name: Build reviewer bundle
         run: |
           mkdir -p qa-dist
-          cp index.html mcs-theme.css role-fix.js qa-fixes.js a11y-fixes.js qa-dist/
+          cp index.html mcs-theme.css mcs-symbol.png role-fix.js qa-fixes.js a11y-fixes.js qa-dist/
           python - <<'PY'
           from pathlib import Path
           path = Path('qa-dist/index.html')
