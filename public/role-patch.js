@@ -50,17 +50,18 @@
   };
 
   function initRolePatch() {
-    if (!window.state && typeof state === 'undefined') return;
+    if (window.__carehireRolePatchReady) return;
 
     function renderRoleTasks(roleName) {
       const list = roleTasks[roleName] || roleTasks['Personal Support Worker (PSW)'];
       state.selectedTasks.clear();
       const picker = document.getElementById('taskPicker');
       if (!picker) return;
+      picker.dataset.role = roleName;
       picker.innerHTML = '<h2>What help is needed?</h2>' + list.map(t => `<label class="checkrow"><input type="checkbox" data-role-task="${t.id}"> <span>${t.name}</span></label>`).join('');
       picker.querySelectorAll('[data-role-task]').forEach(input => input.addEventListener('change', () => {
         const t = list.find(x => x.id === input.dataset.roleTask);
-        if (input.checked) state.selectedTasks.set(t.id, {...t}); else state.selectedTasks.delete(t.id);
+        if (input.checked) state.selectedTasks.set(t.id,{...t}); else state.selectedTasks.delete(t.id);
         renderTaskEditor();
       }));
       document.getElementById('taskEditor').hidden = true;
@@ -80,6 +81,15 @@
       button.addEventListener('click', () => renderRoleTasks(button.dataset.role));
     });
 
+    const baseGo = go;
+    go = function(id) {
+      if (id === 'needs') {
+        const picker = document.getElementById('taskPicker');
+        if (picker?.dataset.role !== state.role) renderRoleTasks(state.role);
+      }
+      return baseGo(id);
+    };
+
     const originalGenerate = generateDocuments;
     generateDocuments = function() {
       originalGenerate();
@@ -90,8 +100,10 @@
     };
 
     renderRoleTasks(state.role);
+    window.__carehireRolePatchReady = true;
+    window.dispatchEvent(new CustomEvent('carehire:role-ready'));
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initRolePatch, { once:true });
-  else initRolePatch();
+  if (document.readyState === 'complete') setTimeout(initRolePatch,0);
+  else window.addEventListener('load', () => setTimeout(initRolePatch,0), { once:true });
 })();
