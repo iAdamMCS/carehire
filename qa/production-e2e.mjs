@@ -1,4 +1,3 @@
-import { chromium } from 'playwright';
 import assert from 'node:assert/strict';
 import axe from 'axe-core';
 
@@ -8,7 +7,9 @@ const playwright = await import('playwright');
 const engine = playwright[browserType];
 if (!engine) throw new Error(`Unknown browser engine: ${browserType}`);
 const browser = await engine.launch({ headless: true });
-const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+// CSP is asserted from the real HTTP response below. Test-only CSP bypass lets axe inject its scanner without weakening production policy.
+const context = await browser.newContext({ bypassCSP: true, viewport: { width: 1440, height: 900 } });
+const page = await context.newPage();
 const browserErrors = [];
 page.on('pageerror', e => browserErrors.push(`pageerror: ${e.message}`));
 page.on('console', m => { if (m.type() === 'error') browserErrors.push(`console: ${m.text()}`); });
@@ -31,6 +32,7 @@ const response = await page.goto(base, { waitUntil: 'networkidle' });
 assert.equal(response?.status(), 200, 'production root returns 200');
 const headers = response?.headers() || {};
 assert.ok(headers['content-security-policy']?.includes("default-src 'self'"), 'CSP is present');
+assert.ok(headers['content-security-policy']?.includes("script-src 'self'"), 'CSP blocks inline scripts');
 assert.equal(headers['x-content-type-options'], 'nosniff', 'nosniff header is present');
 assert.ok(!headers['x-powered-by'], 'Express signature is hidden');
 
@@ -121,5 +123,6 @@ assert.equal(health.status(), 200, 'health endpoint returns 200');
 assert.equal((await health.json()).service, 'carehire', 'health endpoint identifies service');
 
 assert.deepEqual(browserErrors, [], `browser errors: ${browserErrors.join('; ')}`);
+await context.close();
 await browser.close();
 console.log(`CareHire production E2E QA (${browserType}): PASS`);
