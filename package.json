@@ -7,7 +7,7 @@
   "scripts": {
     "start": "node server/index.mjs",
     "dev": "NODE_ENV=development node --watch server/index.mjs",
-    "check": "node --check server/index.mjs && node --check server/gemini.mjs && node --check public/app.js"
+    "check": "node --check server/index.mjs && node --check server/gemini.mjs && node --check public/app.js && node --check public/bulk-select.js"
   },
   "dependencies": {
     "@google/genai": ">=2.0.0 <3.0.0",
