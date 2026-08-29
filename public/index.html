@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CareHire by Modern Caregiving Solutions helps Canadian families plan and document private in-home hiring.">
+  <title>CareHire | Modern Caregiving Solutions</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/logo-override.css">
+</head>
+<body>
+<div class="shell">
+  <div class="brandbar"><strong>Modern Caregiving Solutions</strong> · Clear next steps for families</div>
+  <header class="header"><div class="header-inner"><div class="product"><div class="mark" aria-hidden="true">C</div><div><div class="product-name">CareHire</div><div class="product-by">A Modern Caregiving Solutions tool</div></div></div><div class="badge">Canada · Family hiring</div></div></header>
+  <main class="layout">
+    <nav class="sidebar" aria-label="Hiring plan steps">
+      <div class="sidebar-title">Your hiring plan</div>
+      <button class="navbtn active" data-nav="home">1. Start <small>Role and province</small></button>
+      <button class="navbtn" data-nav="needs">2. Care needs <small>Estimate hours</small></button>
+      <button class="navbtn" data-nav="details">3. Job details <small>Schedule and pay</small></button>
+      <button class="navbtn" data-nav="job">4. Job description <small>Ready to post</small></button>
+      <button class="navbtn" data-nav="interview">5. Interview guide <small>Questions to ask</small></button>
+      <button class="navbtn" data-nav="status">6. Hiring status <small>Employee or contractor?</small></button>
+      <button class="navbtn" data-nav="agreement">7. Work agreement <small>Review together</small></button>
+    </nav>
+    <div class="content">
+      <section id="home" class="screen active" aria-labelledby="home-title">
+        <div class="kicker">Hire home support with confidence</div><h1 id="home-title">Start with the help you actually need.</h1>
+        <p class="lead">CareHire turns a few plain-language answers into an adjustable hours estimate, a job description, interview questions, and a work agreement draft.</p>
+        <div class="progress" aria-hidden="true"><span style="width:10%"></span></div>
+        <div class="card"><label>Who are you looking to hire?</label><div class="choice-grid" id="roleChoices">
+          <button type="button" class="choice selected" data-role="Personal Support Worker (PSW)"><strong>Personal Support Worker</strong><span>Personal care, mobility and daily support</span></button>
+          <button type="button" class="choice" data-role="Housekeeper"><strong>Housekeeper</strong><span>Cleaning and household help</span></button>
+          <button type="button" class="choice" data-role="Sitter / Companion"><strong>Sitter / Companion</strong><span>Company, supervision and simple support</span></button>
+          <button type="button" class="choice" data-role="Overnight Caregiver"><strong>Overnight Care</strong><span>Support or presence overnight</span></button>
+        </div><div class="field"><label for="province">Province or territory</label><select id="province"></select></div><div id="provinceRule" class="info" aria-live="polite"></div><div class="actions"><button type="button" class="btn primary" data-next="needs">Continue</button></div></div>
+        <div class="note"><strong>Privacy:</strong> Do not put diagnoses, names, health-card numbers, medication lists, or other identifying health information into a public job posting.</div>
+      </section>
+      <section id="needs" class="screen" aria-labelledby="needs-title">
+        <div class="kicker">Care needs</div><h1 id="needs-title">Build the weekly estimate from real tasks.</h1><p class="lead">Choose the tasks that apply, then adjust how often they happen and roughly how long each one takes. CareHire only does the arithmetic—it is not a clinical assessment.</p>
+        <div id="taskPicker" class="card"></div><div id="taskEditor" class="card" hidden><h2>Adjust the estimate</h2><div style="overflow-x:auto"><table class="task-table"><thead><tr><th>Task</th><th>Times/week</th><th>Minutes each</th><th>Weekly hours</th></tr></thead><tbody id="taskRows"></tbody></table></div><div class="field"><label for="supervisionHours">Extra supervision/presence hours each week</label><input id="supervisionHours" type="number" min="0" max="168" step="0.5" value="0"></div><div id="hoursResult" class="result"></div></div>
+        <div class="field"><label for="needNotes">Anything else about the routine? <span class="sr-only">You can type or use voice</span></label><textarea id="needNotes" maxlength="1200" placeholder="Keep this general. For example: mornings are usually the busiest time."></textarea></div>
+        <div class="actions"><button type="button" class="btn voice" data-voice-target="needNotes">🎙 Speak instead</button><span class="voice-status" data-voice-status="needNotes"></span><button type="button" class="btn primary" data-next="details">Use this estimate</button></div>
+      </section>
+      <section id="details" class="screen" aria-labelledby="details-title">
+        <div class="kicker">Job details</div><h1 id="details-title">Add the practical details.</h1><div class="grid2"><div class="field"><label for="hours">Approx. weekly hours</label><input id="hours" type="number" min="1" max="168" step="0.5"></div><div class="field"><label for="pay">Proposed pay</label><input id="pay" maxlength="60" placeholder="$24/hour"></div><div class="field"><label for="schedule">Schedule</label><input id="schedule" maxlength="180" placeholder="Weekday mornings + 2 evenings"></div><div class="field"><label for="live">Arrangement</label><select id="live"><option>Live-out</option><option>Live-in</option><option>Occasional / relief</option></select></div></div>
+        <div class="field"><label for="requirements">Requirements</label><textarea id="requirements" maxlength="900" placeholder="For example: First Aid/CPR, references, vulnerable sector check, reliable transportation"></textarea></div><div class="field"><label for="notes">Home and work expectations</label><textarea id="notes" maxlength="900" placeholder="For example: respectful, dependable support and clear communication with the family"></textarea></div>
+        <div class="actions"><button type="button" class="btn voice" data-voice-target="notes">🎙 Speak instead</button><span class="voice-status" data-voice-status="notes"></span><button type="button" class="btn secondary" id="saveDraft">Save on this device</button><button type="button" class="btn primary" data-next="job">Create documents</button></div><div class="note">Saving is optional and stays in this browser. Avoid using CareHire on a shared device if the draft includes information you would not want another device user to see.</div>
+      </section>
+      <section id="job" class="screen" aria-labelledby="job-title"><div class="kicker">Generated for you</div><h1 id="job-title">Job description</h1><div id="jobDoc" class="doc"></div><div class="actions"><button class="btn secondary" data-copy="jobDoc">Copy text</button><button class="btn voice" data-speak="jobDoc">🔊 Read aloud</button><button class="btn primary" data-next="interview">Interview questions</button></div></section>
+      <section id="interview" class="screen" aria-labelledby="interview-title"><div class="kicker">Interview helper</div><h1 id="interview-title">Questions matched to this job</h1><div id="interviewDoc" class="doc"></div><div class="actions"><button class="btn secondary" data-copy="interviewDoc">Copy questions</button><button class="btn voice" data-speak="interviewDoc">🔊 Read aloud</button><button class="btn primary" data-next="status">Check hiring status</button></div></section>
+      <section id="status" class="screen" aria-labelledby="status-title"><div class="kicker">Hiring status</div><h1 id="status-title">Could you be the employer?</h1><p class="lead">You do not choose employment status just by calling someone a contractor. The real working relationship matters.</p><div class="card" id="statusQuestions">
+        <label class="checkrow"><input type="checkbox" data-status-weight="1"> <span>You will set the worker's regular hours or schedule.</span></label><label class="checkrow"><input type="checkbox" data-status-weight="1"> <span>You will decide the main duties and how the work is done.</span></label><label class="checkrow"><input type="checkbox" data-status-weight="1"> <span>The worker will mainly work in your home using your supplies or equipment.</span></label><label class="checkrow"><input type="checkbox" data-status-weight="1"> <span>You will supervise, direct, or regularly review the work.</span></label><label class="checkrow"><input type="checkbox" data-status-weight="-1"> <span>The worker operates an independent business, sets their own methods, and works for multiple clients.</span></label><div id="statusResult" class="result" aria-live="polite"></div></div>
+        <div class="info">CareHire does not determine legal employment status. Review the <a href="https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/special-situations/employing-a-caregiver-baby-sitter-domestic-worker.html" target="_blank" rel="noopener">CRA guidance for caregivers and domestic workers</a> before finalizing the arrangement.</div><div class="actions"><button class="btn primary" data-next="agreement">Build agreement</button></div></section>
+      <section id="agreement" class="screen" aria-labelledby="agreement-title"><div class="kicker">Plain-language draft</div><h1 id="agreement-title">Work agreement</h1><div class="note"><strong>Before signing:</strong> review current employment standards for your province or territory and confirm whether payroll or other employer obligations apply.</div><div id="agreementDoc" class="doc"></div><div class="actions"><button class="btn secondary" data-copy="agreementDoc">Copy agreement</button><button class="btn voice" data-speak="agreementDoc">🔊 Read aloud</button><button class="btn primary" id="printAgreement">Print / Save PDF</button><button class="btn secondary" id="clearLocal">Clear saved data</button></div></section>
+    </div>
+  </main>
+  <footer class="footer"><div><strong>Modern Caregiving Solutions</strong><br>CareHire supports clearer family hiring decisions.</div><div><a href="https://www.moderncaregiving.ca/privacy-policy" target="_blank" rel="noopener">Privacy</a> · <a href="https://www.moderncaregiving.ca/terms-and-conditions" target="_blank" rel="noopener">Terms</a></div></footer>
+</div>
+<script src="/app.js" defer></script>
+<script src="/bulk-select.js" defer></script>
+</body>
+</html>

@@ -1,38 +1,45 @@
-# CareHire Docs — GitHub Pages Prototype
+# CareHire — Modern Caregiving Solutions
 
-This repository contains the CareHire Docs clickable prototype.
+CareHire is a family-friendly Canadian hiring assistant for private in-home support. It helps a caregiver move from care needs to an adjustable weekly-hours estimate, job description, interview guide, hiring-status check and plain-language work agreement draft.
 
-## What reviewers can test
+## Production architecture
 
-- Role and province selection
-- Care-needs assessment
-- Estimated weekly care hours
-- Job details, schedule, and pay
-- Generated job description
-- Tailored interview questions
-- Plain-language work agreement
-- Browser voice-to-text where supported
-- Text-to-speech read-back
-- Print / Save as PDF
+- **Frontend:** accessible mobile-first HTML/CSS/JavaScript served by the application service.
+- **Voice:** browser `MediaRecorder` captures a short push-to-talk clip and sends it to the server. The server calls Gemini transcription; the Gemini key is never exposed to the browser.
+- **AI boundary:** document generation and the hours calculator are deterministic in V1. Gemini is used only for speech transcription. A future free-form voice intake may use Gemini structured output behind the same server-side gateway.
+- **Storage:** V1 has no account and no cloud persistence. Optional drafts are stored only in the current browser with explicit user action. This materially reduces privacy and breach surface.
+- **Hosting target:** Google Cloud Run. Put the Gemini credential in Google Secret Manager.
 
-## Publishing
+## Local development
 
-This repository includes a GitHub Actions workflow at `.github/workflows/pages.yml` that deploys the static prototype from `main` to GitHub Pages.
+1. Install Node.js 22+.
+2. `npm install`
+3. Copy `.env.example` to `.env` and provide a development Gemini API key.
+4. `npm run dev`
+5. Open `http://localhost:8080`.
 
-In GitHub, open **Settings → Pages** and set **Build and deployment → Source → GitHub Actions**.
+## Production deployment
 
-After the workflow succeeds, the review site should be available at:
+Use Cloud Run rather than GitHub Pages for production because CareHire requires a server-side voice endpoint and a protected Gemini credential.
 
-`https://iadammcs.github.io/carehire/`
+Suggested deployment:
 
-## Updating the prototype
+```bash
+gcloud run deploy carehire --source . --region northamerica-northeast1 --allow-unauthenticated
+```
 
-Update `index.html` and merge the change to `main`. GitHub Pages will redeploy automatically.
+Configure `GEMINI_API_KEY` from Secret Manager rather than placing it in source or a plain deployment variable.
 
-## Reviewer guide
+## Go-live gates
 
-See `REVIEWER_GUIDE.md` for the suggested test path and feedback questions.
+Code can be prepared for production, but the product should not be called production-ready until all of these are signed off:
 
-## Important
+1. Canadian employment-law review of the work agreement and jurisdiction copy.
+2. Verification of province/territory reference data and special domestic-worker exceptions.
+3. Privacy review, including browser storage language and Gemini audio handling/retention.
+4. Accessibility review against WCAG 2.2 AA.
+5. Cross-browser/mobile voice testing.
+6. Security review, rate-limit/load testing and incident/rollback runbook.
+7. MCS brand-token review against the current corporate design system/assets.
 
-This is a prototype for workflow and usability review. Generated employment information is illustrative and should not be treated as legal advice. Provincial and federal rules must be verified before production use.
+See `PRODUCTION_READINESS.md` and `VOICE_ARCHITECTURE.md`.

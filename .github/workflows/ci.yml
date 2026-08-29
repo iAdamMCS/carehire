@@ -1,0 +1,38 @@
+name: CareHire CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install production dependencies
+        run: npm install
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+      - name: Syntax checks
+        run: npm run check
+      - name: Install browser QA tools
+        run: |
+          npm install --no-save playwright@1.55.0 axe-core@4.10.3
+          npx playwright install --with-deps chromium firefox webkit
+      - name: Run production browser and API QA
+        run: |
+          node server/index.mjs > /tmp/carehire.log 2>&1 &
+          pid=$!
+          trap 'kill $pid || true' EXIT
+          for i in {1..20}; do
+            curl --fail --silent http://127.0.0.1:8080/healthz >/dev/null && break
+            sleep 0.5
+          done
+          for browser in chromium firefox webkit; do
+            echo "Running production QA in ${browser}"
+            CAREHIRE_BROWSER="${browser}" node qa/production-e2e.mjs
+          done
