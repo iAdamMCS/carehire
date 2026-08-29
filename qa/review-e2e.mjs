@@ -7,10 +7,27 @@ const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
 const errors = [];
 page.on('pageerror', e => errors.push(`pageerror: ${e.message}`));
 page.on('console', m => { if (m.type() === 'error') errors.push(`console: ${m.text()}`); });
+page.on('response', r => { if (r.status() >= 400 && !r.url().includes('favicon')) errors.push(`http ${r.status()}: ${r.url()}`); });
 
 await page.goto(base, { waitUntil: 'networkidle' });
 assert.equal(await page.locator('#roleChoices .choice').count(), 4, 'four role choices');
 assert.equal(await page.locator('#home .voice').isVisible(), false, 'voice hidden on first screen');
+
+// Branding: the live review bundle must use the supplied symbol-only MCS asset, not the placeholder C or an external icon dependency.
+const logoStyle = await page.locator('.logo').evaluate(el => ({
+  bg: getComputedStyle(el).backgroundImage,
+  color: getComputedStyle(el).color,
+  width: el.getBoundingClientRect().width,
+  height: el.getBoundingClientRect().height
+}));
+assert.ok(logoStyle.bg.includes('mcs-symbol.png'), 'MCS symbol asset is used');
+assert.ok(logoStyle.width >= 48 && logoStyle.height >= 36, 'MCS symbol has usable display size');
+
+// The runtime fixes must be loaded by the actual page, not injected only by the QA runner.
+const scriptSources = await page.locator('script[src]').evaluateAll(nodes => nodes.map(n => n.getAttribute('src')));
+for (const expected of ['role-fix.js','qa-fixes.js','a11y-fixes.js']) {
+  assert.ok(scriptSources.some(src => src?.endsWith(expected)), `${expected} loaded by live HTML`);
+}
 
 const roles = [
   {
@@ -94,6 +111,7 @@ await page.locator('#needs .need').nth(0).check();
 await page.locator('header .secondary').click();
 assert.equal(await page.locator('.choice.selected').getAttribute('data-role'), 'Personal Support Worker (PSW)', 'start over role reset');
 assert.equal(await page.locator('#province').inputValue(), 'Alberta', 'start over province reset');
+assert.equal(await page.locator('#hours').inputValue(), '', 'start over hours reset');
 
 // Mobile layout and role flow.
 const mobile = await browser.newPage({ viewport: { width: 390, height: 844 } });
@@ -104,6 +122,8 @@ assert.ok(overflow, 'no horizontal mobile overflow');
 await mobile.locator('.choice[data-role="Housekeeper"]').click();
 await mobile.locator('#home .primary').click();
 assert.ok((await mobile.locator('#needs h1').innerText()).includes('household help'), 'mobile Housekeeper path');
+const mobileLogo = await mobile.locator('.logo').evaluate(el => getComputedStyle(el).backgroundImage);
+assert.ok(mobileLogo.includes('mcs-symbol.png'), 'mobile uses MCS symbol');
 await mobile.close();
 
 assert.deepEqual(errors, [], `browser console/page errors: ${errors.join('; ')}`);
