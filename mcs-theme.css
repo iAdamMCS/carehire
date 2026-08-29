@@ -18,7 +18,7 @@ body{background:#f6f3ec !important;color:#1b2630 !important;line-height:1.55}
 .app{max-width:1180px;min-height:calc(100vh - 40px);box-shadow:0 18px 46px rgba(22,42,58,.08);background:#fff !important}
 .topbar{padding:17px 24px !important;background:rgba(255,255,255,.98) !important;border-bottom:1px solid #e1e6e4 !important}
 .brand{gap:12px !important;color:#162a3a !important;align-items:center}
-.logo{width:40px !important;height:40px !important;border-radius:50% !important;background:#147b78 !important;font-size:18px !important;font-weight:900;box-shadow:0 0 0 4px #edf7f5}
+.logo{width:52px !important;height:40px !important;border-radius:0 !important;background-color:transparent !important;background-image:url('https://images.squarespace-cdn.com/content/v1/5f074a06b4e35a5a2c5837b2/a7c99e54-8eaa-4ede-8ec3-b907684ea6c0/ModernCaregiving_Icon_FullColor_ModernCaregiving_Icon_FullColor.png') !important;background-repeat:no-repeat !important;background-position:center !important;background-size:contain !important;color:transparent !important;font-size:0 !important;font-weight:900;box-shadow:none !important}
 .brand>div:last-child{display:flex;flex-direction:column;line-height:1.05}
 .brand strong{font-size:21px;font-weight:850}.mcs-byline{display:block;font-size:12px;font-weight:500;color:#5e6d76;margin-top:5px}.pill{display:none !important}
 .main{grid-template-columns:224px minmax(0,1fr) !important;min-height:calc(100vh - 116px) !important}
@@ -45,4 +45,4 @@ input,select,textarea{border:1px solid #afbebc !important;border-radius:12px !im
 .mcs-footer{max-width:1180px;margin:0 auto;padding:24px 22px 34px;color:#5e6d76;font-size:13px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid rgba(22,42,58,.06)}.mcs-footer strong{color:#162a3a}.mcs-footer a{color:#0c5f5d;text-decoration:none;font-weight:700}.mcs-footer a:hover{text-decoration:underline}
 /* Make the review surface feel like guided family decision support rather than an admin dashboard. */
 .screen.active{animation:mcsFade .2s ease-out}@keyframes mcsFade{from{opacity:.6;transform:translateY(2px)}to{opacity:1;transform:none}}
-@media(max-width:800px){.mcs-brandbar{padding:9px 16px}.mcs-brandbar span{display:none}.main{grid-template-columns:1fr !important}.content{padding:30px 20px 46px !important}.topbar{padding:14px 16px !important}.app{box-shadow:none}.mcs-footer{padding:20px 18px 28px}.logo{width:38px !important;height:38px !important}}
+@media(max-width:800px){.mcs-brandbar{padding:9px 16px}.mcs-brandbar span{display:none}.main{grid-template-columns:1fr !important}.content{padding:30px 20px 46px !important}.topbar{padding:14px 16px !important}.app{box-shadow:none}.mcs-footer{padding:20px 18px 28px}.logo{width:48px !important;height:36px !important}}
