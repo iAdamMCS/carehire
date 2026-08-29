@@ -11,7 +11,7 @@ const port = Number(process.env.PORT || 8080);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.resolve(__dirname, '../public');
 const indexHtml = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8')
-  .replace('</body>', '<script src="/role-patch.js"></script>\n</body>');
+  .replace('</body>', '<script src="/role-patch.js" defer></script>\n</body>');
 
 app.disable('x-powered-by');
 app.set('trust proxy', 1);
