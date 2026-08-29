@@ -2,6 +2,7 @@ import express from 'express';
 import helmet from 'helmet';
 import { rateLimit } from 'express-rate-limit';
 import { fileURLToPath } from 'node:url';
+import fs from 'node:fs';
 import path from 'node:path';
 import { transcribeAudio } from './gemini.mjs';
 
@@ -9,6 +10,8 @@ const app = express();
 const port = Number(process.env.PORT || 8080);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const publicDir = path.resolve(__dirname, '../public');
+const indexHtml = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8')
+  .replace('</body>', '<script src="/role-patch.js"></script>\n</body>');
 
 app.disable('x-powered-by');
 app.set('trust proxy', 1);
@@ -69,13 +72,16 @@ app.post('/api/voice/transcribe', voiceLimiter, async (req, res) => {
   }
 });
 
+app.get('/', (_req, res) => res.type('html').send(indexHtml));
+
 app.use(express.static(publicDir, {
+  index: false,
   extensions: ['html'],
   etag: true,
   maxAge: process.env.NODE_ENV === 'production' ? '1h' : 0
 }));
 
-app.get('/{*splat}', (_req, res) => res.sendFile(path.join(publicDir, 'index.html')));
+app.get('/{*splat}', (_req, res) => res.type('html').send(indexHtml));
 
 app.use((error, _req, res, _next) => {
   console.error('unhandled_error', { name: error?.name });
