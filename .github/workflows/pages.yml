@@ -36,7 +36,7 @@ jobs:
           from pathlib import Path
           path = Path('index.html')
           html = path.read_text(encoding='utf-8')
-          tags = ['<script src="role-fix.js"></script>', '<script src="qa-fixes.js"></script>']
+          tags = ['<script src="role-fix.js"></script>', '<script src="qa-fixes.js"></script>', '<script src="a11y-fixes.js"></script>']
           for tag in tags:
               if tag not in html:
                   html = html.replace('</body>', f'{tag}\n</body>')
