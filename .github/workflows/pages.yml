@@ -30,6 +30,18 @@ jobs:
         with:
           enablement: true
 
+      - name: Prepare reviewer bundle
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('index.html')
+          html = path.read_text(encoding='utf-8')
+          tag = '<script src="role-fix.js"></script>'
+          if tag not in html:
+              html = html.replace('</body>', f'{tag}\n</body>')
+          path.write_text(html, encoding='utf-8')
+          PY
+
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
