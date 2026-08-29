@@ -81,15 +81,27 @@
     });
   }
 
-  function removeImpliedPayRecommendation() {
+  function setupPayHandling() {
     const pay = document.getElementById('pay');
     if (!pay) return;
     if (pay.value.trim() === '$24/hour') pay.value = '';
     pay.placeholder = 'Enter the rate you are considering';
+
+    const currentGenerateAll = window.generateAll;
+    if (typeof currentGenerateAll !== 'function') return;
+    window.generateAll = function() {
+      const wasBlank = !pay.value.trim();
+      if (wasBlank) pay.value = 'To be agreed';
+      try {
+        return currentGenerateAll();
+      } finally {
+        if (wasBlank) pay.value = '';
+      }
+    };
   }
 
   enhanceRoleCards();
   setupNeedsValidation();
   setupStartOver();
-  removeImpliedPayRecommendation();
+  setupPayHandling();
 })();
