@@ -1,4 +1,13 @@
 (() => {
+  const hasTasks = () => document.querySelectorAll('#needs .need:checked').length > 0;
+  const showTasksRequired = () => {
+    const result = document.getElementById('hoursResult');
+    if (!result) return;
+    result.style.display = 'block';
+    result.innerHTML = '<strong>Choose at least one task first.</strong><br>Select the help you need before creating the hiring documents.';
+    result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  };
+
   function enhanceRoleCards() {
     const cards = [...document.querySelectorAll('#roleChoices .choice')];
     cards.forEach(card => {
@@ -11,9 +20,7 @@
           card.click();
         }
       });
-      card.addEventListener('click', () => {
-        cards.forEach(x => x.setAttribute('aria-pressed', x === card ? 'true' : 'false'));
-      });
+      card.addEventListener('click', () => cards.forEach(x => x.setAttribute('aria-pressed', x === card ? 'true' : 'false')));
     });
   }
 
@@ -23,31 +30,34 @@
     const buttons = [...needs.querySelectorAll('.actions .btn')];
     const calculate = buttons.find(b => b.textContent.includes('Calculate estimate'));
     const useEstimate = buttons.find(b => b.textContent.includes('Use estimate'));
-    const result = document.getElementById('hoursResult');
-
-    const hasTasks = () => document.querySelectorAll('#needs .need:checked').length > 0;
-    const showRequired = () => {
-      if (!result) return;
-      result.style.display = 'block';
-      result.innerHTML = '<strong>Choose at least one task first.</strong><br>Select the help you need, then calculate the estimate.';
-      result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    };
-
     if (calculate) {
       calculate.removeAttribute('onclick');
       calculate.addEventListener('click', () => {
-        if (!hasTasks()) return showRequired();
+        if (!hasTasks()) return showTasksRequired();
         window.calcHours();
       });
     }
     if (useEstimate) {
       useEstimate.removeAttribute('onclick');
       useEstimate.addEventListener('click', () => {
-        if (!hasTasks()) return showRequired();
+        if (!hasTasks()) return showTasksRequired();
         window.calcHours();
         window.go('details');
       });
     }
+  }
+
+  function guardDocumentSteps() {
+    const currentGo = window.go;
+    if (typeof currentGo !== 'function') return;
+    window.go = function(id) {
+      if (['job','interview','agreement'].includes(id) && !hasTasks()) {
+        currentGo('needs');
+        showTasksRequired();
+        return;
+      }
+      return currentGo(id);
+    };
   }
 
   function setupStartOver() {
@@ -64,7 +74,7 @@
       if (presence) presence.value = '0';
       const fields = {
         needNotes: '',
-        hours: '20',
+        hours: '',
         pay: '',
         notes: 'Respectful, dependable support in a family home. Clear communication with the family is important.'
       };
@@ -81,15 +91,27 @@
     });
   }
 
-  function removeImpliedPayRecommendation() {
+  function setupPayHandling() {
     const pay = document.getElementById('pay');
     if (!pay) return;
     if (pay.value.trim() === '$24/hour') pay.value = '';
     pay.placeholder = 'Enter the rate you are considering';
+    const currentGenerateAll = window.generateAll;
+    if (typeof currentGenerateAll !== 'function') return;
+    window.generateAll = function() {
+      const wasBlank = !pay.value.trim();
+      if (wasBlank) pay.value = 'To be agreed';
+      try {
+        return currentGenerateAll();
+      } finally {
+        if (wasBlank) pay.value = '';
+      }
+    };
   }
 
   enhanceRoleCards();
   setupNeedsValidation();
+  guardDocumentSteps();
   setupStartOver();
-  removeImpliedPayRecommendation();
+  setupPayHandling();
 })();
