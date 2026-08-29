@@ -16,7 +16,13 @@ async function scan(name) {
   const serious = result.violations.filter(v => ['serious','critical'].includes(v.impact));
   if (serious.length) {
     console.error(`Accessibility violations on ${name}:`);
-    for (const v of serious) console.error(`${v.impact} ${v.id}: ${v.help} (${v.nodes.length} nodes)`);
+    for (const v of serious) {
+      console.error(`${v.impact} ${v.id}: ${v.help} (${v.nodes.length} nodes)`);
+      for (const node of v.nodes) {
+        console.error(`  target=${JSON.stringify(node.target)} html=${node.html}`);
+        if (node.failureSummary) console.error(`  ${node.failureSummary.replace(/\n/g,' ')}`);
+      }
+    }
   }
   assert.equal(serious.length, 0, `${name} has serious/critical WCAG violations`);
 }
