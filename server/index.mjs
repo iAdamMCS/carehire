@@ -22,7 +22,7 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       scriptSrc: ["'self'"],
       styleSrc: ["'self'"],
-      imgSrc: ["'self'", 'data:'],
+      imgSrc: ["'self'", 'data:', 'https://images.squarespace-cdn.com'],
       connectSrc: ["'self'"],
       mediaSrc: ["'self'", 'blob:'],
       objectSrc: ["'none'"],
