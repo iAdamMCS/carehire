@@ -1,0 +1,51 @@
+name: CareHire Review QA
+
+on:
+  pull_request:
+    paths:
+      - 'index.html'
+      - 'mcs-theme.css'
+      - 'role-fix.js'
+      - 'qa-fixes.js'
+      - 'qa/**'
+      - '.github/workflows/review-qa.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm install playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Build reviewer bundle
+        run: |
+          mkdir -p qa-dist
+          cp index.html mcs-theme.css role-fix.js qa-fixes.js qa-dist/
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('qa-dist/index.html')
+          html = path.read_text(encoding='utf-8')
+          for tag in ['<script src="role-fix.js"></script>', '<script src="qa-fixes.js"></script>']:
+              if tag not in html:
+                  html = html.replace('</body>', f'{tag}\n</body>')
+          path.write_text(html, encoding='utf-8')
+          PY
+      - name: Run browser QA
+        run: |
+          python -m http.server 4173 --directory qa-dist >/tmp/carehire-qa-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID || true' EXIT
+          for i in {1..20}; do
+            curl -fsS http://127.0.0.1:4173/ >/dev/null && break
+            sleep 0.5
+          done
+          node qa/review-e2e.mjs
