@@ -13,7 +13,6 @@ await page.goto(base, { waitUntil: 'networkidle' });
 assert.equal(await page.locator('#roleChoices .choice').count(), 4, 'four role choices');
 assert.equal(await page.locator('#home .voice').isVisible(), false, 'voice hidden on first screen');
 
-// Branding: the live review bundle must use the supplied symbol-only MCS asset, not the placeholder C or an external icon dependency.
 const logoStyle = await page.locator('.logo').evaluate(el => ({
   bg: getComputedStyle(el).backgroundImage,
   color: getComputedStyle(el).color,
@@ -23,7 +22,6 @@ const logoStyle = await page.locator('.logo').evaluate(el => ({
 assert.ok(logoStyle.bg.includes('mcs-symbol.png'), 'MCS symbol asset is used');
 assert.ok(logoStyle.width >= 48 && logoStyle.height >= 36, 'MCS symbol has usable display size');
 
-// The runtime fixes must be loaded by the actual page, not injected only by the QA runner.
 const scriptSources = await page.locator('script[src]').evaluateAll(nodes => nodes.map(n => n.getAttribute('src')));
 for (const expected of ['role-fix.js','qa-fixes.js','a11y-fixes.js']) {
   assert.ok(scriptSources.some(src => src?.endsWith(expected)), `${expected} loaded by live HTML`);
@@ -66,6 +64,15 @@ for (const r of roles) {
   for (const x of r.excludes) assert.ok(!needsText.includes(x), `${r.name} excludes ${x}`);
 
   const selected = page.locator('#needs .need');
+  const bulk = page.locator('.needs-bulk-actions button');
+  assert.equal((await bulk.innerText()).trim(), 'Select all', `${r.name} Select all available`);
+  await bulk.click();
+  assert.equal(await page.locator('#needs .need:checked').count(), await selected.count(), `${r.name} Select all checks every task`);
+  assert.equal((await bulk.innerText()).trim(), 'Clear all', `${r.name} bulk control changes to Clear all`);
+  await bulk.click();
+  assert.equal(await page.locator('#needs .need:checked').count(), 0, `${r.name} Clear all clears every task`);
+  assert.equal((await bulk.innerText()).trim(), 'Select all', `${r.name} bulk control resets`);
+
   await selected.nth(0).check();
   await selected.nth(1).check();
   await page.getByRole('button', { name: 'Calculate estimate' }).click();
@@ -83,7 +90,6 @@ for (const r of roles) {
   assert.ok((await page.locator('#agreementDoc').innerText()).includes(r.name), `${r.name} agreement`);
 }
 
-// Role change clears previous tasks.
 await page.locator('[data-nav="home"]').click();
 await page.locator('.choice[data-role="Housekeeper"]').click();
 await page.locator('#home .primary').click();
@@ -92,20 +98,18 @@ await page.locator('[data-nav="home"]').click();
 await page.locator('.choice[data-role="Personal Support Worker (PSW)"]').click();
 await page.locator('#home .primary').click();
 assert.equal(await page.locator('#needs .need:checked').count(), 0, 'role switching clears tasks');
+assert.equal((await page.locator('.needs-bulk-actions button').innerText()).trim(), 'Select all', 'role switching resets bulk control');
 
-// Do not invent an estimate when no task is selected.
 await page.getByRole('button', { name: /Use estimate/ }).click();
 assert.equal(await page.locator('#needs').isVisible(), true, 'empty task selection stays on needs');
 assert.ok((await page.locator('#hoursResult').innerText()).includes('Choose at least one task first'), 'empty task validation');
 
-// Keyboard role selection.
 await page.locator('[data-nav="home"]').click();
 const hk = page.locator('.choice[data-role="Housekeeper"]');
 await hk.focus();
 await page.keyboard.press('Enter');
 assert.equal(await hk.getAttribute('aria-pressed'), 'true', 'keyboard selects Housekeeper');
 
-// Start over resets role and province.
 await page.locator('#home .primary').click();
 await page.locator('#needs .need').nth(0).check();
 await page.locator('header .secondary').click();
@@ -113,7 +117,6 @@ assert.equal(await page.locator('.choice.selected').getAttribute('data-role'), '
 assert.equal(await page.locator('#province').inputValue(), 'Alberta', 'start over province reset');
 assert.equal(await page.locator('#hours').inputValue(), '', 'start over hours reset');
 
-// Mobile layout and role flow.
 const mobile = await browser.newPage({ viewport: { width: 390, height: 844 } });
 await mobile.goto(base, { waitUntil: 'networkidle' });
 assert.equal(await mobile.locator('.sidebar').isVisible(), false, 'mobile sidebar hidden');
@@ -122,6 +125,9 @@ assert.ok(overflow, 'no horizontal mobile overflow');
 await mobile.locator('.choice[data-role="Housekeeper"]').click();
 await mobile.locator('#home .primary').click();
 assert.ok((await mobile.locator('#needs h1').innerText()).includes('household help'), 'mobile Housekeeper path');
+assert.equal((await mobile.locator('.needs-bulk-actions button').innerText()).trim(), 'Select all', 'mobile Select all visible');
+await mobile.locator('.needs-bulk-actions button').click();
+assert.equal(await mobile.locator('#needs .need:checked').count(), await mobile.locator('#needs .need').count(), 'mobile Select all works');
 const mobileLogo = await mobile.locator('.logo').evaluate(el => getComputedStyle(el).backgroundImage);
 assert.ok(mobileLogo.includes('mcs-symbol.png'), 'mobile uses MCS symbol');
 await mobile.close();
